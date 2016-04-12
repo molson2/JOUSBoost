@@ -4,7 +4,7 @@
 \alias{index_over}
 \title{Return indices to be used for jittered data in oversampling}
 \usage{
-index_over(ix_pos, ix_neg, delta)
+index_over(ix_pos, ix_neg, q)
 }
 \arguments{
 \item{ix_pos}{indices for positive examples in data}

@@ -4,7 +4,7 @@
 \alias{index_under}
 \title{Return indices to be used in original data for undersampling}
 \usage{
-index_under(ix_pos, ix_neg, delta)
+index_under(ix_pos, ix_neg, q, delta)
 }
 \arguments{
 \item{ix_pos}{indices for positive examples in data}
