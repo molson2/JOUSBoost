@@ -11,5 +11,6 @@ Suggests:
     testthat
 LinkingTo: Rcpp
 Imports:
-    Rcpp
+    Rcpp,
+    doParallel
 RoxygenNote: 5.0.1

@@ -37,12 +37,34 @@ test_that("JOUS.predict", {
 })
 
 test_that("jous",{
+
   # load data set
   data(sonar)
   # prediction/classification functions
-  jous_obj = jous()
+  library(randomForest)
+  class_func = function(x, y, ...) randomForest(x, as.factor(y), proximity = F,
+                                           oob.prox = F, ...)
+  pred_func = function(obj, newdata) {
+    zz = predict(obj, newdata)
+    as.numeric(levels(zz)[as.integer(zz)])
+  }
+  # over
+  jous_obj = jous(as.matrix(sonar[,-61]), sonar[,61],
+                  class_func,
+                  pred_func,
+                  type="over",
+                  delta = 10,
+                  nu=1)
+  rm(jous_obj)
 
-
+  # under
+  jous_obj = jous(as.matrix(sonar[,-61]), sonar[,61],
+                  class_func,
+                  pred_func,
+                  type="over",
+                  delta = 10,
+                  nu=1)
+  rm(jous_obj)
 
 })
 
@@ -53,8 +75,8 @@ test_that("jous",{
 # Probably still need to find better way to incorporate including median ...
 # maybe leave it out separately? (This is going to fuck with the sampling part)
 
+# Seems to be a problem with loading doParallel ... fix this?
 
-
-
+# Figure out whats going on with predict not getting exported
 
 
