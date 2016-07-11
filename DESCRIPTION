@@ -1,16 +1,20 @@
 Package: JOUSBoost
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Title: Implements under/oversampling for probability estimation
+Version: 0.0.0.9000
+Author@R: person("Matthew", "Olson", email = "molson5574@gmail.com"",
+    role=c("aut", "cre"))
+Maintainer: Matthew Olson <molson5574@gmail.com>
+Description: Implements under/oversampling for probability estimation.  To be
+    used with machine learning methods such as random forests, boosting, etc.
+License: MIT + file LICENSE
 LazyData: TRUE
 Suggests:
     testthat
 LinkingTo: Rcpp
+Depends:
+    foreach
 Imports:
     Rcpp,
-    doParallel
+    rpart
 RoxygenNote: 5.0.1

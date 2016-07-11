@@ -36,13 +36,22 @@ test_that("JOUS.predict", {
 
 })
 
+test_that("adaBoost",{
+  N = 250
+  X = matrix(rnorm(N*5), N)
+  y = 2*rbinom(N, 1, .2*(rowSums(X) > 0) + .8*(rowSums(X) < 0)) - 1
+  ada = adaBoost(X = X, y = y, tree_depth = 5, n_rounds = 100)
+  y_hat = predict(ada, X)
+
+})
+
 test_that("jous",{
 
   # load data set
   data(sonar)
   # prediction/classification functions
   library(randomForest)
-  class_func = function(x, y, ...) randomForest(x, as.factor(y), proximity = F,
+  class_func = function(X, y, ...) randomForest(X, as.factor(y), proximity = F,
                                            oob.prox = F, ...)
   pred_func = function(obj, newdata) {
     zz = predict(obj, newdata)
@@ -58,12 +67,12 @@ test_that("jous",{
   rm(jous_obj)
 
   # under
-  jous_obj = jous(as.matrix(sonar[,-61]), sonar[,61],
-                  class_func,
-                  pred_func,
-                  type="over",
-                  delta = 10,
-                  nu=1)
+  #jous_obj = jous(as.matrix(sonar[,-61]), sonar[,61],
+  #                class_func,
+  #                pred_func,
+  #                type="under",
+  #                delta = 10,
+  #                nu=1)
   rm(jous_obj)
 
 })
@@ -72,11 +81,7 @@ test_that("jous",{
 #                              ITEMS TO FIX
 ###############################################################################
 
-# Probably still need to find better way to incorporate including median ...
-# maybe leave it out separately? (This is going to fuck with the sampling part)
-
-# Seems to be a problem with loading doParallel ... fix this?
-
-# Figure out whats going on with predict not getting exported
+# Make most functions private
+# make adaboost leaner !!!
 
 
