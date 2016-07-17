@@ -2,6 +2,7 @@
 
 S3method(predict,AdaBoost)
 S3method(predict,JOUS)
+S3method(print,AdaBoost)
 export(adaBoost)
 export(circle_data)
 export(friedman_data)

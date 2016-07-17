@@ -53,7 +53,7 @@ jous = function(X, y,
   if(type == "over"){
     ix = index_over(ix_pos, ix_neg, q)
     col_stds = apply(X, 2, sd)
-    x_jitter = sapply(1:ncol(X), function(i) X[,i] +
+    X_jitter = sapply(1:ncol(X), function(i) X[,i] +
                         runif(n=nrow(X), -col_stds[i]*nu, col_stds[i]*nu))
     models = foreach(i = seq(ncuts), .inorder=T) %dopar% {
       ix_temp = c(ix$ix_neg_cut[[i]], ix$ix_pos_cut[[i]])
@@ -78,7 +78,7 @@ jous = function(X, y,
   jous_obj$phat_train = predict(jous_obj, X)
 
   # out of sample
-  if(!is.null(x_pred))
+  if(!is.null(X_pred))
     jous_obj$phat_test = predict(jous_obj, X_pred)
 
   if(!keep_models)
@@ -98,7 +98,7 @@ predict.JOUS = function(object, X){
   q = object$q
 
   # calculate predictions for each classifier
-  pred_mat = sapply(object$models, function(x) object$pred_func(x, X))
+  pred_mat = sapply(object$models, function(z) object$pred_func(z, X))
   if(!all(pred_mat %in% c(-1,1)))
     stop("Your prediction function must return values only in -1, 1")
 

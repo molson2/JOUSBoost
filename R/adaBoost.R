@@ -19,19 +19,30 @@ adaBoost = function(X, y, tree_depth = 3, n_rounds = 100, verbose = FALSE){
   if(!is.matrix(X))
     stop("X must be a matrix")
 
-  control = rpart.control(minsplit = 0, minbucket = 1, cp = -1,
-                          maxcompete = 0, maxsurrogate = 0, usesurrogate = 0,
-                          xval = 0, maxdepth = tree_depth)
+  control = rpart::rpart.control(minsplit = 0, minbucket = 1, cp = -1,
+                                 maxcompete = 0, maxsurrogate = 0,
+                                 usesurrogate = 0, xval = 0,
+                                 maxdepth = tree_depth)
 
   n = dim(X)[1]
   w = rep(1/n, n)
   trees = list()
-  alphas = rep(NA, n_rounds)
+  alphas = list()
 
   for(i in seq(n_rounds)){
 
-    tree = rpart(y ~ ., data = data.frame(X), weights = w, method = "class",
-                 control = control, x=FALSE, y=FALSE, model=FALSE)
+    tree = rpart::rpart(y ~ ., data = data.frame(X), weights = w,
+                        method = "class", control = control, x=FALSE, y=FALSE,
+                        model=FALSE)
+    # trim tree object
+    tree$where=NULL
+    tree$call=NULL
+    tree$cptable=NULL
+    tree$functions=NULL
+    tree$control=NULL
+    tree$variable.importance=NULL
+    tree$parms=NULL
+
     pred = as.integer(as.character(predict(tree, data.frame(X), type="class")))
     e = sum(w*(pred != y))
 
@@ -43,15 +54,23 @@ adaBoost = function(X, y, tree_depth = 3, n_rounds = 100, verbose = FALSE){
     w = w*exp(-alpha*pred*y)
     w = w/sum(w)
 
-    trees[[i]] = tree
-    alphas[i] = alpha
+    # kill formulas since they waste memory
+    if(i == 1){
+      terms = tree$terms
+    } else{
+      tree$terms = NULL
+    }
 
-    if(verbose & (mod(i, 10) == 0))
+    trees[[i]] = tree
+    alphas[[i]] = alpha
+
+    if(verbose & (i %% 10 == 0))
       cat("Iteration: ", i, "\n")
 
   }
 
-  out = list(alphas = alphas, trees = trees, tree_depth = tree_depth)
+  out = list(alphas = unlist(alphas), trees = trees, tree_depth = tree_depth,
+             terms=terms)
   class(out) = "AdaBoost"
   out
 
@@ -70,15 +89,30 @@ adaBoost = function(X, y, tree_depth = 3, n_rounds = 100, verbose = FALSE){
 #' # some more R code
 predict.AdaBoost = function(obj, X){
   f = 0
-  X = data.frame(X)
   for(i in seq_along(obj$alphas)){
-    pred = as.integer(as.character(predict(tree, X, type="class")))
+    tree = obj$trees[[i]]
+    tree$terms = obj$terms
+    pred = as.integer(as.character(predict(tree, data.frame(X),
+                                           type="class")))
     f = f + obj$alphas[i]*pred
   }
   sign(f)
 }
 
-
+#' Simulate from the Friedman model:
+#'
+#' [try to insert some latex here maybe]
+#'
+#' @param obj
+#' @return
+#' @export
+#' @examples
+#' sample(n)
+#' # some more R code
+print.AdaBoost = function(obj){
+  cat('AdaBoost: tree_depth = ', obj$tree_depth, ' rounds = ',
+      length(obj$alphas))
+}
 
 
 

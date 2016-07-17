@@ -85,8 +85,6 @@ index_under = function(ix_pos, ix_neg, q, delta){
 }
 
 
-
-
 #' @useDynLib JOUSBoost
 #' @importFrom Rcpp sourceCpp
 NULL
@@ -104,7 +102,7 @@ NULL
 #' @param outer_r
 #' @return
 #' @export
-circle_data = function(n = 1e3, inner_r = 8, outer_r = 28){
+circle_data = function(n = 500, inner_r = 8, outer_r = 28){
   if(outer_r <= inner_r)
     stop('outer_r must be strictly larger than inner_r')
 
@@ -113,7 +111,7 @@ circle_data = function(n = 1e3, inner_r = 8, outer_r = 28){
   p = 1*(r < inner_r) +
       (outer_r-r)/(outer_r-inner_r)*((inner_r < r) & (r < outer_r))
   y = 2*rbinom(n, 1, p) - 1
-  list(X=X, y=y)
+  list(X=X, y=y, p=p)
 }
 
 #' Simulate from the Friedman model:
@@ -125,7 +123,7 @@ circle_data = function(n = 1e3, inner_r = 8, outer_r = 28){
 #' @param
 #' @return
 #' @export
-friedman_data = function(n = 1e3, d = 10, gamma = 10){
+friedman_data = function(n = 500, d = 10, gamma = 10){
   if(d < 6)
     stop('d must be greater than 6')
   X = matrix(rnorm(d*n), nrow=n, ncol=d)
@@ -133,7 +131,7 @@ friedman_data = function(n = 1e3, d = 10, gamma = 10){
               rowSums(X[,1:6])
   p = exp(log_odds)/(1 + exp(log_odds))
   y = 2*rbinom(n, 1, p) - 1
-  list(X=X, y=y)
+  list(X=X, y=y, p=p)
 
 }
 
