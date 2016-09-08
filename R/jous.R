@@ -2,23 +2,42 @@
 #'
 #' Perform probability estimation using jittering with over or undersampling
 #'
-#' @param X
-#' @param y
-#' @param delta
-#' @param class_func function to perform classification.  This function must be
-#'        exactly of the form class_func(x, y) where x is a matrix and y is a
-#'        vector with entries in c(-1,1), and it must return an object on which
-#'        pred_func can create predictions.  See examples.
-#' @param pred_func function to create predictions.  This function must be
-#'        exactly of the form pred_func(obj, x) where obj is an object returned
-#'        by class_func and x is a matrix of new data values, and it must return
+#' @param X A matrix of continuous predictors.
+#' @param y A vector of responses with entries in \code{c(-1, 1)}
+#' @param delta An integer (greater than 3) to control the number of quantiles to
+#'        estimate:
+#' @param class_func Function to perform classification.  This function must be
+#'        exactly of the form \code{class_func(X, y)} where X is a matrix and y is a
+#'        vector with entries in \code{c(-1, 1)}, and it must return an object on which
+#'        \code{pred_func} can create predictions.  See examples.
+#' @param pred_func Function to create predictions.  This function must be
+#'        exactly of the form \code{pred_func(obj, X)} where obj is an object returned
+#'        by class_func and X is a matrix of new data values, and it must return
+#'        a vector with entries in \code{c(-1, 1)}.  See examples.
+#' @param type of sampling: "over" for oversampling,  or "under" for
+#'        undersampling.
+#' @param nu Amount of jittering to apply to
+#' @param X_pred A matrix of predictors for which to form probability estimates
+#' @param keep_models Whether to store all of the models used to create
+#'        the probability estimates.  If False, the user will need to re-run
+#'        \code{jous} when creating probability estimates for test data.
 #'
-#' @param type over or under
-#' @param nu amount of jittering
-#' @param X_pred a matrix of predictors for which to form probability estimates
-#' @param keep_models whether to store all of the models used to create
-#'        the probability estimates.  If False, the user will need to re-run.
-#' @return JOUS object
+#' @return Returns an object of class "JOUS" containing information about the
+#' parameters used in the \code{jous} function call, as well as the following
+#' additional components:
+#' @return q The vector of target quantiles estimated by \code{jous}.  Note that
+#' the estimated probabilities will be located at the midpoints of the values in
+#' \code{q}.
+#' @return phat_train The in-sample probability estimates.
+#' @return phat_test Probability estimates for the optional test data in \code{X_test}
+#' @return models If \code{keep_models == TRUE}, a list of each model
+#' @note The \code{jous} function runs the classifier \code{class_func} a total
+#' of \code{\delta} times on the data, which can be computationally expensive.
+#' In order to speed up this process, the user can take advantage of multiple
+#' processors by registering a parallel backend (see example).
+#' @references Mease, D., Wyner, A. and Buha, A. (2007). Costweighted
+#' boosting with jittering and over/under-sampling:
+#' JOUS-boost. J. Machine Learning Research 8 409–439.
 #' @export
 jous = function(X, y,
                 class_func,
@@ -50,9 +69,10 @@ jous = function(X, y,
     ncuts = ncuts + 1
   }
 
+  # Fit models over tilted data
   if(type == "over"){
     ix = index_over(ix_pos, ix_neg, q)
-    col_stds = apply(X, 2, sd)
+    col_stds = apply(X, 2, sd, na.rm=TRUE)
     X_jitter = sapply(1:ncol(X), function(i) X[,i] +
                         runif(n=nrow(X), -col_stds[i]*nu, col_stds[i]*nu))
     models = foreach(i = seq(ncuts), .inorder=T) %dopar% {
@@ -75,11 +95,11 @@ jous = function(X, y,
   class(jous_obj) = "JOUS"
 
   # in sample
-  jous_obj$phat_train = predict(jous_obj, X)
+  jous_obj$phat_train = predict(jous_obj, X, type="prob")
 
   # out of sample
   if(!is.null(X_pred))
-    jous_obj$phat_test = predict(jous_obj, X_pred)
+    jous_obj$phat_test = predict(jous_obj, X_pred, type="prob")
 
   if(!keep_models)
     jous_obj$models = NULL
@@ -89,7 +109,7 @@ jous = function(X, y,
 }
 
 #' @export
-predict.JOUS = function(object, X){
+predict.JOUS = function(object, X, type="response"){
 
   if(is.null(object$models))
     stop("No saved models in your JOUS object.  Rerun with keep_models = T")
@@ -104,7 +124,15 @@ predict.JOUS = function(object, X){
 
   median_loc = which(q == 0.5) - 1 # 0 based indexing here
   phat = grid_probs(pred_mat, q, delta, median_loc)
-  phat
+
+  # handle response type
+  if(type == "response"){
+    2*(phat > 0.5) - 1
+  } else if(type =="prob"){
+    phat
+  } else {
+    stop('type must be either "response" or "prob"')
+  }
 
 }
 

@@ -87,7 +87,7 @@ adaBoost = function(X, y, tree_depth = 3, n_rounds = 100, verbose = FALSE){
 #' @examples
 #' sample(n)
 #' # some more R code
-predict.AdaBoost = function(obj, X){
+predict.AdaBoost = function(obj, X, type="response"){
   f = 0
   for(i in seq_along(obj$alphas)){
     tree = obj$trees[[i]]
@@ -96,7 +96,15 @@ predict.AdaBoost = function(obj, X){
                                            type="class")))
     f = f + obj$alphas[i]*pred
   }
-  sign(f)
+
+  # handle response type
+  if(type == "response"){
+    sign(f)
+  } else if(type =="prob"){
+    1/(1+exp(-2*f))
+  } else {
+    stop('type must be either "response" or "prob"')
+  }
 }
 
 #' Simulate from the Friedman model:

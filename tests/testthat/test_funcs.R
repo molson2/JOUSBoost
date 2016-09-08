@@ -19,6 +19,42 @@ test_that("index_under",{
                floor(nneg*(c(1, 2, 3, 4, 10, 6, 7, 8, 9)/10)))
 })
 
+test_that("index_over_2", {
+
+  npos = 430
+  nneg = 222
+  delta = 10
+  q = (1:(delta-1))/delta
+  out = index_over(1:npos, (npos+1):(npos+nneg), q)
+
+  out_test_plus = sapply(1:(delta-1), function(x) length(out$ix_pos_cut[[x]]) + npos )
+  out_test_neg = sapply(1:(delta-1), function(x) length(out$ix_neg_cut[[x]]) + nneg )
+
+  out_expect_plus = (delta*(1-q)*npos); out_expect_plus[q == 0.5] = npos
+  out_expect_neg = (delta*q*nneg); out_expect_neg[q == 0.5] = nneg
+
+  expect_equal(out_test_plus/out_expect_plus, rep(1, delta-1), tol=0.01)
+  expect_equal(out_test_neg/out_expect_neg, rep(1, delta-1), tol=0.01)
+
+})
+
+test_that("index_under_2",{
+  npos = 557
+  nneg = 253
+  delta = 6
+  q = (1:(delta-1))/delta
+  out = index_under(1:npos, (npos+1):(npos+nneg), q, delta)
+
+  out_test_plus = sapply(1:(delta-1), function(x) length(out$ix_pos_cut[[x]]))
+  out_test_neg = sapply(1:(delta-1), function(x) length(out$ix_neg_cut[[x]]))
+
+  out_expect_plus = (1-q)*npos; out_expect_plus[q == 0.5] = npos
+  out_expect_neg = q*nneg; out_expect_neg[q == 0.5] = nneg
+
+  expect_equal(out_test_plus/out_expect_plus, rep(1, delta-1), tol=0.05)
+  expect_equal(out_test_neg/out_expect_neg, rep(1, delta-1), tol=0.05)
+})
+
 test_that("grid_probs", {
   q = c(1/3, .5, 2/3)
   delta = 3
@@ -32,10 +68,6 @@ test_that("grid_probs", {
                c(2/3-1/6, 1-1/6, 1/6, 1/3+1/6))
 })
 
-test_that("JOUS.predict", {
-
-})
-
 test_that("adaBoost",{
   N = 1000
   dat = friedman_data(N)
@@ -43,19 +75,13 @@ test_that("adaBoost",{
   y_hat = predict(ada, dat$X)
 })
 
-test_that("jous",{
 
-
-
-})
 
 ###############################################################################
 #                              ITEMS TO FIX
 ###############################################################################
 
 # Make most functions private
-# debug probability (under-sampling look somewhat passable, bug with over)
-# account for "jittering" with categorical variables
-# add in some checks for 0 boosting ... boosting should always have at least 1
-# try with foreach to see if works
+# Add in documentation
+
 
