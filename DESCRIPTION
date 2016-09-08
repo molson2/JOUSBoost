@@ -13,7 +13,6 @@ Suggests:
     testthat
 LinkingTo: Rcpp
 Depends:
-    foreach
 Imports:
     Rcpp,
     rpart
