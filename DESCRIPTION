@@ -2,11 +2,11 @@ Package: JOUSBoost
 Type: Package
 Title: Implements under/oversampling for probability estimation
 Version: 0.0.0.9000
-Author@R: person("Matthew", "Olson", email = "molson5574@gmail.com"",
+Author@R: person("Matthew", "Olson", email = "maolson@wharton.upenn.edu"",
     role=c("aut", "cre"))
-Maintainer: Matthew Olson <molson5574@gmail.com>
+Maintainer: Matthew Olson <maolson@wharton.upenn.edu>
 Description: Implements under/oversampling for probability estimation.  To be
-    used with machine learning methods such as random forests, boosting, etc.
+    used with machine learning methods such as adaBoost, random forests, etc.
 License: MIT + file LICENSE
 LazyData: TRUE
 Suggests:

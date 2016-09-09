@@ -5,7 +5,6 @@
 #' @param ix_neg indices for negative examples in data
 #' @return returns a list, each of element of which gives indices to be used on
 #'         a particular cut (note: will be of length delta - 1)
-#' @export
 index_over = function(ix_pos, ix_neg, q){
 
   if(length(ix_neg) == 0 | length(ix_pos) == 0 )
@@ -43,7 +42,6 @@ index_over = function(ix_pos, ix_neg, q){
 #' @param ix_neg indices for negative examples in data
 #' @return returns a list, each of element of which gives indices to be used on
 #'         a particular cut (note: will be of length delta - 1)
-#' @export
 index_under = function(ix_pos, ix_neg, q, delta){
 
   if(length(ix_neg) == 0 | length(ix_pos) == 0 )
