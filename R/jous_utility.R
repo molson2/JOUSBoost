@@ -1,8 +1,9 @@
 
 #' Return indices to be used for jittered data in oversampling
 #'
-#' @param ix_pos indices for positive examples in data
-#' @param ix_neg indices for negative examples in data
+#' @param ix_pos Indices for positive examples in data.
+#' @param ix_neg Indices for negative examples in data.
+#' @param q Quantiles for which to construct tilted datasets.
 #' @return returns a list, each of element of which gives indices to be used on
 #'         a particular cut (note: will be of length delta - 1)
 index_over = function(ix_pos, ix_neg, q){
@@ -38,8 +39,10 @@ index_over = function(ix_pos, ix_neg, q){
 #'
 #' (note: sampling is done without replacement)
 #'
-#' @param ix_pos indices for positive examples in data
-#' @param ix_neg indices for negative examples in data
+#' @param ix_pos Indices for positive examples in data.
+#' @param ix_neg Indices for negative examples in data.
+#' @param q Quantiles for which to construct tilted datasets.
+#' @param delta Number of quantiles.
 #' @return returns a list, each of element of which gives indices to be used on
 #'         a particular cut (note: will be of length delta - 1)
 index_under = function(ix_pos, ix_neg, q, delta){

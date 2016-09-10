@@ -7,9 +7,13 @@
 index_under(ix_pos, ix_neg, q, delta)
 }
 \arguments{
-\item{ix_pos}{indices for positive examples in data}
+\item{ix_pos}{Indices for positive examples in data.}
 
-\item{ix_neg}{indices for negative examples in data}
+\item{ix_neg}{Indices for negative examples in data.}
+
+\item{q}{Quantiles for which to construct tilted datasets.}
+
+\item{delta}{Number of quantiles.}
 }
 \value{
 returns a list, each of element of which gives indices to be used on

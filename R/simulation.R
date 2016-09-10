@@ -26,7 +26,7 @@
 #'
 #' @references Mease, D., Wyner, A. and Buha, A. (2007). Costweighted
 #' boosting with jittering and over/under-sampling:
-#' JOUS-boost. J. Machine Learning Research 8 409–439.
+#' JOUS-boost. J. Machine Learning Research 8 409-439.
 #'
 #' @examples
 #' # Generate data from the circle model
@@ -40,9 +40,9 @@
 #' x = seq(-outer_r, outer_r, by=0.02)
 #' radius = sqrt(outer(x^2, x^2, "+"))
 #' prob = ifelse(radius >= outer_r, 0, ifelse(radius <= inner_r, 1,
-#' (outer_r-radius)/(outer_r-inner_r)))
+#'              (outer_r-radius)/(outer_r-inner_r)))
 #' filled.contour(x, x, prob, col=rev(palette(gray(seq(0,.9,len=20)))),
-#' xlab='x1', ylab='x2', main='p(y=1|x)')
+#'                xlab='x1', ylab='x2', main='p(y=1|x)')
 #' }
 #'
 #' @export
@@ -77,11 +77,11 @@ circle_data = function(n = 500, inner_r = 8, outer_r = 28){
 #'
 #' @references Friedman, J., Hastie, T. and Tibshirani, R. (2000). Additive logistic
 #' regression: a statistical view of boosting (with discussion), Annals of
-#' Statistics 28: 337–307.
+#' Statistics 28: 337-307.
 #'
 #' @examples
 #' set.seed(111)
-#' dat = friedman_data(n = 500, d = 10, gamma = 0.5
+#' dat = friedman_data(n = 500, d = 10, gamma = 0.5)
 #'
 #' @export
 friedman_data = function(n = 500, d = 10, gamma = 10){

@@ -1,24 +1,29 @@
 #' AdaBoost Classifier
 #'
-#' An implementation of the adaBoost algorithm from Freund and Shapire (1997).
+#' An implementation of the adaBoost algorithm from Freund and Shapire (1997)
+#' applied to decision tree classifiers.
 #'
 #' @param X A matrix of continuous predictors.
-#' @param y A vector of responses with entries in \code{c(-1, 1)}
+#' @param y A vector of responses with entries in \code{c(-1, 1)}.
 #' @param tree_depth The depth of the base tree classifier to use.
 #' @param n_rounds The number of rounds of boosting to use.
 #' @param verbose Whether to print the number of iterations.
+#'
 #' @references Freund, Y. and Schapire, R. (1997). A decision-theoretic
 #' generalization of online learning and an application to boosting, Journal of
-#'  Computer and System Sciences 55: 119–139.
-#' @return Returns an object of class "AdaBoost" containing the following values:
+#'  Computer and System Sciences 55: 119-139.
+#'
+#' @return Returns an object of class AdaBoost containing the following values:
 #' \item{alphas}{Weights computed in the adaBoost fit.}
 #' \item{trees}{The trees constructed in each round of boosting.  Storing trees
 #'              allows one to make predictions on new data.}
+#'
 #' @note Trees are grown using the CART algorithm implemented in the \code{rpart}
 #'       package.  In order to conserve memory, the only parts of the fitted
 #'       tree objects that are retained are those essential to making predictions.
 #'       In practice, the number of rounds of boosting to use is chosen by
 #'       cross-validation.
+#'
 #' @examples
 #' # Generate data from the circle model
 #' set.seed(111)
@@ -26,7 +31,7 @@
 #' train_index = sample(1:500, 400)
 #'
 #' ada = adaBoost(dat$X[train_index,], dat$y[train_index], tree_depth = 2,
-#'                n_rounds = 100, verbose = T)
+#'                n_rounds = 100, verbose = TRUE)
 #' print(ada)
 #' yhat_ada = predict(ada, dat$X[-train_index,])
 #'
@@ -104,23 +109,24 @@ adaBoost = function(X, y, tree_depth = 3, n_rounds = 100, verbose = FALSE){
 #'
 #' Makes a prediction on new data for a given fitted \code{adaBoost} model.
 #'
-#' @param ada_obj An object of class "AdaBoost" returned by the \code{adaBoost} function.
+#' @param object An object of class AdaBoost returned by the \code{adaBoost} function.
 #' @param X A design matrix of predictors.
 #' @param type The type of prediction to return.  If \code{type="response"}, a
 #'        class label of -1 or 1 is returned.  If \code{type="prob"}, the
 #'        probability \eqn{p(y = 1 | x)} is returned.
+#' @param ... \dots
 #'
 #' @return Returns a vector of class predictions if \code{type="response"}, or a
-#'          vector of class probabilities p(y=1|x) if \code{type="prob"}.
+#'          vector of class probabilities \eqn{p(y=1|x)} if \code{type="prob"}.
 #'
 #' @note Probabilities are estimated according to the formula:
-#'       \deqn{p(y=1| x) = 1/(1 + \exp(-2f(x)))}
+#'       \deqn{p(y=1| x) = 1/(1 + exp(-2*f(x)))}
 #'       where \eqn{f(x)} is the score function produced by adaBoost.  See
 #'       Friedman (2000).
 #'
 #' @references Friedman, J., Hastie, T. and Tibshirani, R. (2000). Additive logistic
 #' regression: a statistical view of boosting (with discussion), Annals of
-#' Statistics 28: 337–307.
+#' Statistics 28: 337-307.
 #'
 #' @examples
 #' # Generate data from the circle model
@@ -129,20 +135,20 @@ adaBoost = function(X, y, tree_depth = 3, n_rounds = 100, verbose = FALSE){
 #' train_index = sample(1:500, 400)
 #'
 #' ada = adaBoost(dat$X[train_index,], dat$y[train_index], tree_depth = 2,
-#'                n_rounds = 100, verbose = T)
+#'                n_rounds = 100, verbose = TRUE)
 #' # get class prediction
 #' yhat = predict(ada, dat$X[-train_index, ])
 #' # get probability estimate
 #' phat = predict(ada, dat$X[-train_index, ], type="prob")
 #' @export
-predict.AdaBoost = function(ada_obj, X, type="response"){
+predict.AdaBoost = function(object, X, type="response", ...){
   f = 0
-  for(i in seq_along(ada_obj$alphas)){
-    tree = ada_obj$trees[[i]]
-    tree$terms = ada_obj$terms
+  for(i in seq_along(object$alphas)){
+    tree = object$trees[[i]]
+    tree$terms = object$terms
     pred = as.integer(as.character(predict(tree, data.frame(X),
                                            type="class")))
-    f = f + ada_obj$alphas[i]*pred
+    f = f + object$alphas[i]*pred
   }
 
   # handle response type
@@ -156,13 +162,14 @@ predict.AdaBoost = function(ada_obj, X, type="response"){
 }
 
 #' Print a summary of adaBoost fit.
-#' @param ada_obj An AdaBoost object fit using the \code{adaBoost} function.
+#' @param x An AdaBoost object fit using the \code{adaBoost} function.
+#' @param ... \dots
 #' @return Printed summary of the fit, including information about the tree
 #'         depth and number of boosting rounds used.
 #' @export
-print.AdaBoost = function(ada_obj){
-  cat('AdaBoost: tree_depth = ', ada_obj$tree_depth, ' rounds = ',
-      length(ada_obj$alphas), '\n')
+print.AdaBoost = function(x, ...){
+  cat('AdaBoost: tree_depth = ', x$tree_depth, ' rounds = ',
+      length(x$alphas), '\n')
 }
 
 

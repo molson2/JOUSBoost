@@ -2,7 +2,15 @@
 using namespace Rcpp;
 #define TOL 1e-8
 
-//' @export
+//' Function to compute predicted quantiles
+//'
+//' Find predicted quantiles given classification results at different quantiles.
+//'
+//' @param X Matrix of class predictions, where each column gives the predictions
+//'        for a given quantile in q.
+//' @param q The quantiles for which the columns of X are predictions.
+//' @param delta The number of quantiles used.
+//' @param median_loc Location of median quantile (0-based indexing).
 // [[Rcpp::export]]
 NumericVector grid_probs(IntegerMatrix X, NumericVector q, double delta,
                        int median_loc) {
