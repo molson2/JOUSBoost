@@ -105,9 +105,9 @@ jous = function(X, y,
   models = list()
   if(type == "over"){
     ix = index_over(ix_pos, ix_neg, q)
-    col_stds = apply(X, 2, sd, na.rm=TRUE)
+    col_stds = apply(X, 2, stats::sd, na.rm=TRUE)
     X_jitter = sapply(1:ncol(X), function(i) X[,i] +
-                        runif(n=nrow(X), -col_stds[i]*nu, col_stds[i]*nu))
+                        stats::runif(n=nrow(X), -col_stds[i]*nu, col_stds[i]*nu))
     for(i in seq(ncuts)){
       ix_temp = c(ix$ix_neg_cut[[i]], ix$ix_pos_cut[[i]])
       models[[i]] = class_func(rbind(X, X_jitter[ix_temp,]), c(y, y[ix_temp]))
@@ -128,11 +128,11 @@ jous = function(X, y,
   class(jous_obj) = "JOUS"
 
   # in sample
-  jous_obj$phat_train = predict(jous_obj, X, type="prob")
+  jous_obj$phat_train = stats::predict(jous_obj, X, type="prob")
 
   # out of sample
   if(!is.null(X_pred))
-    jous_obj$phat_test = predict(jous_obj, X_pred, type="prob")
+    jous_obj$phat_test = stats::predict(jous_obj, X_pred, type="prob")
 
   if(!keep_models)
     jous_obj$models = NULL
@@ -171,6 +171,7 @@ jous = function(X, y,
 #' # get probability estimate
 #' phat = predict(jous_fit, dat$X[-train_index, ], type="prob")
 #'
+#' @export predict.JOUS
 #' @export
 predict.JOUS = function(object, X, type="response", ...){
 

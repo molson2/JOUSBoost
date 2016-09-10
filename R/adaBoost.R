@@ -72,7 +72,7 @@ adaBoost = function(X, y, tree_depth = 3, n_rounds = 100, verbose = FALSE){
     tree$variable.importance=NULL
     tree$parms=NULL
 
-    pred = as.integer(as.character(predict(tree, data.frame(X), type="class")))
+    pred = as.integer(as.character(stats::predict(tree, data.frame(X), type="class")))
     e = sum(w*(pred != y))
 
     # If tree perfectly gets data, boosting terminates
@@ -140,13 +140,14 @@ adaBoost = function(X, y, tree_depth = 3, n_rounds = 100, verbose = FALSE){
 #' yhat = predict(ada, dat$X[-train_index, ])
 #' # get probability estimate
 #' phat = predict(ada, dat$X[-train_index, ], type="prob")
+#' @export predict.AdaBoost
 #' @export
 predict.AdaBoost = function(object, X, type="response", ...){
   f = 0
   for(i in seq_along(object$alphas)){
     tree = object$trees[[i]]
     tree$terms = object$terms
-    pred = as.integer(as.character(predict(tree, data.frame(X),
+    pred = as.integer(as.character(stats::predict(tree, data.frame(X),
                                            type="class")))
     f = f + object$alphas[i]*pred
   }
