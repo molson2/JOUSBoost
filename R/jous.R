@@ -19,7 +19,7 @@
 #' @param nu The amount of noise to apply to predictors when oversampling data.
 #'        The noise level is controlled by \code{nu * sd(X[,j])} for each
 #'        predictor - the default of \code{nu = 1} works well.
-#' @param X_pred A matrix of predictors for which to form probability estimates
+#' @param X_pred A matrix of predictors for which to form probability estimates.
 #' @param keep_models Whether to store all of the models used to create
 #'        the probability estimates.  If False, the user will need to re-run
 #'        \code{jous} when creating probability estimates for test data.
@@ -146,7 +146,10 @@ jous = function(X, y,
 #' @param type The type of prediction to return.  If \code{type="response"}, a
 #'        class label of -1 or 1 is returned.  If \code{type="prob"}, the
 #'        probability \eqn{p(y = 1 | x)} is returned.
-#' @return
+#'
+#' @return Returns a vector of class predictions if \code{type="response"}, or a
+#'          vector of class probabilities p(y=1|x) if \code{type="prob"}.
+#'
 #' @examples
 #' #' # Generate data from Friedman model #
 #' set.seed(111)

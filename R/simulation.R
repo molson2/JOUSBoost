@@ -18,7 +18,7 @@
 #' @param inner_r Inner radius of annulus.
 #' @param outer_r Outer radius of annulus.
 #'
-#' @returnReturns a list with the following components:
+#' @return Returns a list with the following components:
 #'
 #' \item{y}{Vector of simulated response in \code{c(-1,1)}.}
 #' \item{X}{An \code{n}x\code{2} matrix of simulated predictors.}

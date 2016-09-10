@@ -104,16 +104,20 @@ adaBoost = function(X, y, tree_depth = 3, n_rounds = 100, verbose = FALSE){
 #'
 #' Makes a prediction on new data for a given fitted \code{adaBoost} model.
 #'
-#' @param ada_obj
+#' @param ada_obj An object of class "AdaBoost" returned by the \code{adaBoost} function.
 #' @param X A design matrix of predictors.
 #' @param type The type of prediction to return.  If \code{type="response"}, a
 #'        class label of -1 or 1 is returned.  If \code{type="prob"}, the
 #'        probability \eqn{p(y = 1 | x)} is returned.
-#' @return
+#'
+#' @return Returns a vector of class predictions if \code{type="response"}, or a
+#'          vector of class probabilities p(y=1|x) if \code{type="prob"}.
+#'
 #' @note Probabilities are estimated according to the formula:
 #'       \deqn{p(y=1| x) = 1/(1 + \exp(-2f(x)))}
 #'       where \eqn{f(x)} is the score function produced by adaBoost.  See
 #'       Friedman (2000).
+#'
 #' @references Friedman, J., Hastie, T. and Tibshirani, R. (2000). Additive logistic
 #' regression: a statistical view of boosting (with discussion), Annals of
 #' Statistics 28: 337–307.
@@ -157,8 +161,8 @@ predict.AdaBoost = function(ada_obj, X, type="response"){
 #'         depth and number of boosting rounds used.
 #' @export
 print.AdaBoost = function(ada_obj){
-  cat('AdaBoost: tree_depth = ', obj$tree_depth, ' rounds = ',
-      length(obj$alphas), '\n')
+  cat('AdaBoost: tree_depth = ', ada_obj$tree_depth, ' rounds = ',
+      length(ada_obj$alphas), '\n')
 }
 
 
