@@ -1,0 +1,9 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^data-raw$
+^tests/test.*$
+junk.R
+hello.R
+cran-comments.md
+^README\.Rmd$
+^README-.*\.png$

@@ -7,7 +7,7 @@
 #'
 #' For more theoretical background, consult Mease (2007).
 #'
-#' @references Mease, D., Wyner, A. and Buha, A. (2007). Costweighted
+#' @references Mease, D., Wyner, A. and Buja, A. (2007). Costweighted
 #' boosting with jittering and over/under-sampling:
 #' JOUS-boost. J. Machine Learning Research 8 409-439.
 #'
