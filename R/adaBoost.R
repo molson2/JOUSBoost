@@ -25,19 +25,20 @@
 #'       cross-validation.
 #'
 #' @examples
+#' \dontrun{
 #' # Generate data from the circle model
 #' set.seed(111)
 #' dat = circle_data(n = 500)
 #' train_index = sample(1:500, 400)
 #'
 #' ada = adaBoost(dat$X[train_index,], dat$y[train_index], tree_depth = 2,
-#'                n_rounds = 100, verbose = TRUE)
+#'                n_rounds = 200, verbose = TRUE)
 #' print(ada)
 #' yhat_ada = predict(ada, dat$X[-train_index,])
 #'
 #' # calculate misclassification rate
 #' mean(dat$y[-train_index] != yhat_ada)
-#'
+#' }
 #' @export
 adaBoost = function(X, y, tree_depth = 3, n_rounds = 100, verbose = FALSE){
 
@@ -129,6 +130,7 @@ adaBoost = function(X, y, tree_depth = 3, n_rounds = 100, verbose = FALSE){
 #' Statistics 28: 337-307.
 #'
 #' @examples
+#' \dontrun{
 #' # Generate data from the circle model
 #' set.seed(111)
 #' dat = circle_data(n = 500)
@@ -140,6 +142,7 @@ adaBoost = function(X, y, tree_depth = 3, n_rounds = 100, verbose = FALSE){
 #' yhat = predict(ada, dat$X[-train_index, ])
 #' # get probability estimate
 #' phat = predict(ada, dat$X[-train_index, ], type="prob")
+#' }
 #' @export predict.AdaBoost
 #' @export
 predict.AdaBoost = function(object, X, type="response", ...){

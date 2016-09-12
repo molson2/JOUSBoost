@@ -48,6 +48,7 @@
 #' JOUS-boost. J. Machine Learning Research 8 409-439.
 #'
 #' @examples
+#' \dontrun{
 #' # Generate data from Friedman model #
 #' set.seed(111)
 #' dat = friedman_data(n = 500, d = 10, gamma = 0.5)
@@ -69,6 +70,7 @@
 #'
 #' mean((phat_jous - dat$p[-train_index])^2)
 #' mean((phat_ada - dat$p[-train_index])^2)
+#' }
 #'
 #' @export
 jous = function(X, y,
@@ -155,6 +157,7 @@ jous = function(X, y,
 #'          vector of class probabilities \eqn{p(y=1|x)} if \code{type="prob"}.
 #'
 #' @examples
+#' \dontrun{
 #' #' # Generate data from Friedman model #
 #' set.seed(111)
 #' dat = friedman_data(n = 500, d = 10, gamma = 0.5)
@@ -170,7 +173,7 @@ jous = function(X, y,
 #' yhat = predict(jous_fit, dat$X[-train_index, ])
 #' # get probability estimate
 #' phat = predict(jous_fit, dat$X[-train_index, ], type="prob")
-#'
+#' }
 #' @export predict.JOUS
 #' @export
 predict.JOUS = function(object, X, type="response", ...){

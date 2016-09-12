@@ -63,6 +63,7 @@ Also,\code{jous} cannot yet be applied to categorical predictors - in the
 oversampling case, it is not clear how to "jitter" a categorical variable.
 }
 \examples{
+\dontrun{
 # Generate data from Friedman model #
 set.seed(111)
 dat = friedman_data(n = 500, d = 10, gamma = 0.5)
@@ -84,6 +85,7 @@ phat_ada = predict(ada, dat$X[train_index,], type="prob")
 
 mean((phat_jous - dat$p[-train_index])^2)
 mean((phat_ada - dat$p[-train_index])^2)
+}
 
 }
 \references{

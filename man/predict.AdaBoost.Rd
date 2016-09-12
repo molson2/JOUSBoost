@@ -31,6 +31,7 @@ Probabilities are estimated according to the formula:
       Friedman (2000).
 }
 \examples{
+\dontrun{
 # Generate data from the circle model
 set.seed(111)
 dat = circle_data(n = 500)
@@ -42,6 +43,7 @@ ada = adaBoost(dat$X[train_index,], dat$y[train_index], tree_depth = 2,
 yhat = predict(ada, dat$X[-train_index, ])
 # get probability estimate
 phat = predict(ada, dat$X[-train_index, ], type="prob")
+}
 }
 \references{
 Friedman, J., Hastie, T. and Tibshirani, R. (2000). Additive logistic

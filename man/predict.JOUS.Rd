@@ -25,6 +25,7 @@ Returns a vector of class predictions if \code{type="response"}, or a
 Makes a prediction on new data for a given fitted \code{jous} model.
 }
 \examples{
+\dontrun{
 #' # Generate data from Friedman model #
 set.seed(111)
 dat = friedman_data(n = 500, d = 10, gamma = 0.5)
@@ -40,6 +41,6 @@ jous_fit = jous(dat$X[train_index,], dat$y[train_index], class_func,
 yhat = predict(jous_fit, dat$X[-train_index, ])
 # get probability estimate
 phat = predict(jous_fit, dat$X[-train_index, ], type="prob")
-
+}
 }
 
