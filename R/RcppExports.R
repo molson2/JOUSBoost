@@ -10,6 +10,7 @@
 #' @param q The quantiles for which the columns of X are predictions.
 #' @param delta The number of quantiles used.
 #' @param median_loc Location of median quantile (0-based indexing).
+#' @export
 grid_probs <- function(X, q, delta, median_loc) {
     .Call('JOUSBoost_grid_probs', PACKAGE = 'JOUSBoost', X, q, delta, median_loc)
 }

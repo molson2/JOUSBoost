@@ -4,8 +4,8 @@
 \alias{jous}
 \title{Jittering with Over/Under Sampling}
 \usage{
-jous(X, y, class_func, pred_func, type = "under", delta = 10, nu = 1,
-  X_pred = NULL, keep_models = F)
+jous(X, y, class_func, pred_func, type = c("under", "over"), delta = 10,
+  nu = 1, X_pred = NULL, keep_models = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{X}{A matrix of continuous predictors.}
@@ -40,6 +40,8 @@ type methods.}
 \item{keep_models}{Whether to store all of the models used to create
 the probability estimates.  If \code{type=FALSE}, the user will need
 to re-run \code{jous} when creating probability estimates for test data.}
+
+\item{verbose}{If \code{TRUE}, print the function's progress to the terminal.}
 }
 \value{
 Returns an object of class JOUS containing information about the
@@ -52,6 +54,7 @@ the estimated probabilities will be located at the midpoints of the values in
 \item{phat_test}{Probability estimates for the optional test data in \code{X_test}}
 \item{models}{If \code{keep_models=TRUE}, a list of models fitted to
 the resampled data sets.}
+\item{confusion_matrix} A confusion matrix for the in-sample fits.
 }
 \description{
 Perform probability estimation using jittering with over or undersampling.
@@ -70,17 +73,17 @@ dat = friedman_data(n = 500, d = 10, gamma = 0.5)
 train_index = sample(1:500, 400)
 
 # Apply jous to adaBoost classifier
-class_func = function(X, y) adaBoost(X, y, tree_depth = 2, n_rounds = 100)
+class_func = function(X, y) adaboost(X, y, tree_depth = 2, n_rounds = 200)
 pred_func = function(fit_obj, X_test) predict(fit_obj, X_test)
 
 jous_fit = jous(dat$X[train_index,], dat$y[train_index], class_func,
-                pred_func, type="under", delta=10, keep_models=TRUE)
+                pred_func, keep_models=TRUE)
 # get probability
 phat_jous = predict(jous_fit, dat$X[-train_index, ], type="prob")
 
-# compare with probability from adaBoost
-ada = adaBoost(dat$X[train_index,], dat$y[train_index], tree_depth = 2,
-               n_rounds = 100)
+# compare with probability from AdaBoost
+ada = adaboost(dat$X[train_index,], dat$y[train_index], tree_depth = 2,
+               n_rounds = 200)
 phat_ada = predict(ada, dat$X[train_index,], type="prob")
 
 mean((phat_jous - dat$p[-train_index])^2)

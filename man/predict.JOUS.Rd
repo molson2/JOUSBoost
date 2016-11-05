@@ -4,7 +4,7 @@
 \alias{predict.JOUS}
 \title{Create predictions}
 \usage{
-\method{predict}{JOUS}(object, X, type = "response", ...)
+\method{predict}{JOUS}(object, X, type = c("response", "prob"), ...)
 }
 \arguments{
 \item{object}{An object of class JOUS returned by the \code{jous} function.}
@@ -32,7 +32,7 @@ dat = friedman_data(n = 500, d = 10, gamma = 0.5)
 train_index = sample(1:500, 400)
 
 # Apply jous to adaBoost classifier
-class_func = function(X, y) adaBoost(X, y, tree_depth = 2, n_rounds = 100)
+class_func = function(X, y) adaboost(X, y, tree_depth = 2, n_rounds = 100)
 pred_func = function(fit_obj, X_test) predict(fit_obj, X_test)
 
 jous_fit = jous(dat$X[train_index,], dat$y[train_index], class_func,
