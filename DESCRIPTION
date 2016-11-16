@@ -11,7 +11,8 @@ Suggests:
     testthat
 LinkingTo: Rcpp
 Depends:
-    R (>= 2.10)
+    R (>= 2.10),
+    foreach
 Imports:
     Rcpp,
     rpart,

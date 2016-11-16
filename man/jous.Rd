@@ -5,7 +5,8 @@
 \title{Jittering with Over/Under Sampling}
 \usage{
 jous(X, y, class_func, pred_func, type = c("under", "over"), delta = 10,
-  nu = 1, X_pred = NULL, keep_models = FALSE, verbose = FALSE)
+  nu = 1, X_pred = NULL, keep_models = FALSE, verbose = FALSE,
+  parallel = FALSE, packages = NULL)
 }
 \arguments{
 \item{X}{A matrix of continuous predictors.}
@@ -42,6 +43,14 @@ the probability estimates.  If \code{type=FALSE}, the user will need
 to re-run \code{jous} when creating probability estimates for test data.}
 
 \item{verbose}{If \code{TRUE}, print the function's progress to the terminal.}
+
+\item{parallel}{If \code{TRUE}, use parallel \code{foreach} to fit models.
+Must register parallel before hand, such as \code{doParallel}.  See
+examples below.}
+
+\item{packages}{If \code{parallel = TRUE}, a vector of strings containing the
+names of any packages used in \code{class_func} or \code{pred_func}.
+See examples below.}
 }
 \value{
 Returns an object of class JOUS containing information about the
@@ -88,6 +97,20 @@ phat_ada = predict(ada, dat$X[train_index,], type="prob")
 
 mean((phat_jous - dat$p[-train_index])^2)
 mean((phat_ada - dat$p[-train_index])^2)
+
+## Example using parallel option
+
+library(doParallel)
+cl <- makeCluster(4)
+registerDoParallel(cl)
+
+# n.b. the packages='rpart' is not really needed here since it gets
+# exported automatically by JOUSBoost, but for illustration
+jous_fit = jous(dat$X[train_index,], dat$y[train_index], class_func,
+                pred_func, keep_models=TRUE, parallel=TRUE,
+                packages='rpart')
+phat = predict(jous_fit, dat$X[-train_index,], type='prob')
+stopCluster(cl)
 }
 
 }

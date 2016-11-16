@@ -36,7 +36,7 @@ class_func = function(X, y) adaboost(X, y, tree_depth = 2, n_rounds = 100)
 pred_func = function(fit_obj, X_test) predict(fit_obj, X_test)
 
 jous_fit = jous(dat$X[train_index,], dat$y[train_index], class_func,
-                pred_func, type="under", delta=10, keep_models=TRUE)
+                pred_func, keep_models=TRUE)
 # get class prediction
 yhat = predict(jous_fit, dat$X[-train_index, ])
 # get probability estimate

@@ -27,7 +27,12 @@
 #'        the probability estimates.  If \code{type=FALSE}, the user will need
 #'        to re-run \code{jous} when creating probability estimates for test data.
 #' @param verbose If \code{TRUE}, print the function's progress to the terminal.
-#'
+#' @param parallel If \code{TRUE}, use parallel \code{foreach} to fit models.
+#'        Must register parallel before hand, such as \code{doParallel}.  See
+#'        examples below.
+#' @param packages If \code{parallel = TRUE}, a vector of strings containing the
+#'        names of any packages used in \code{class_func} or \code{pred_func}.
+#'        See examples below.
 #' @return Returns an object of class JOUS containing information about the
 #' parameters used in the \code{jous} function call, as well as the following
 #' additional components:
@@ -72,6 +77,20 @@
 #'
 #' mean((phat_jous - dat$p[-train_index])^2)
 #' mean((phat_ada - dat$p[-train_index])^2)
+#'
+#' ## Example using parallel option
+#'
+#' library(doParallel)
+#' cl <- makeCluster(4)
+#' registerDoParallel(cl)
+#'
+#' # n.b. the packages='rpart' is not really needed here since it gets
+#' # exported automatically by JOUSBoost, but for illustration
+#' jous_fit = jous(dat$X[train_index,], dat$y[train_index], class_func,
+#'                 pred_func, keep_models=TRUE, parallel=TRUE,
+#'                 packages='rpart')
+#' phat = predict(jous_fit, dat$X[-train_index,], type='prob')
+#' stopCluster(cl)
 #' }
 #'
 #' @export
@@ -83,7 +102,9 @@ jous = function(X, y,
                 nu=1,
                 X_pred=NULL,
                 keep_models=FALSE,
-                verbose=FALSE){
+                verbose=FALSE,
+                parallel=FALSE,
+                packages=NULL){
 
   # check data types
   if(!all(y %in% c(-1,1)))
@@ -95,7 +116,16 @@ jous = function(X, y,
   if(delta < 3)
     stop("delta must be an integer greater than 2")
 
+  # extract tpye of sampling
   type = match.arg(type)
+
+  # warn if no packages specified and parallel = T
+  if(parallel & is.null(packages)){
+    message(paste0('"parallel" = TRUE, but no packages specified for export.',
+                   '  If function fails, specify a non-null value for ',
+                   '"packages."'))
+    packages=''
+  }
 
   ix_pos = which(y == 1)
   ix_neg = which(y == -1)
@@ -108,30 +138,43 @@ jous = function(X, y,
     ncuts = ncuts + 1
   }
 
-  # Fit models over tilted data
+  ## Fit models over tilted data ##
   models = list()
-  if(type == "over"){
+  if(type == 'over'){
     ix = index_over(ix_pos, ix_neg, q)
     col_stds = apply(X, 2, stats::sd, na.rm=TRUE)
-    X_jitter = sapply(1:ncol(X), function(i) X[,i] +
-                        stats::runif(n=nrow(X), -col_stds[i]*nu, col_stds[i]*nu))
-    for(i in seq(ncuts)){
-      ix_temp = c(ix$ix_neg_cut[[i]], ix$ix_pos_cut[[i]])
-      models[[i]] = class_func(rbind(X, X_jitter[ix_temp,]), c(y, y[ix_temp]))
-      if(verbose) cat('Done with iteration ', i, ' of ', ncuts, '\n')
-    }
-  } else if(type == "under"){
+    X_ = sapply(1:ncol(X), function(i) X[,i] +
+                  stats::runif(n=nrow(X), -col_stds[i]*nu, col_stds[i]*nu))
+  } else{
     ix = index_under(ix_pos, ix_neg, q, delta)
+    X_ = X # redundant copy, but will simplify code a bit
+  }
+
+  # loop over data-sets
+  if(parallel){
+    models = foreach(i = seq(ncuts), .inorder=T, .packages=packages) %dopar% {
+      ix_temp = c(ix$ix_neg_cut[[i]], ix$ix_pos_cut[[i]])
+      if(type == 'over'){
+        class_func(rbind(X, X_[ix_temp,]), c(y, y[ix_temp]))
+      } else{
+        class_func(X[ix_temp,], y[ix_temp])
+      }
+    }
+  } else{
     for(i in seq(ncuts)){
       ix_temp = c(ix$ix_neg_cut[[i]], ix$ix_pos_cut[[i]])
-      models[[i]] = class_func(X[ix_temp,], y[ix_temp])
+      if(type == 'over'){
+        models[[i]] = class_func(rbind(X, X_[ix_temp,]), c(y, y[ix_temp]))
+      } else{
+        models[[i]] = class_func(X[ix_temp,], y[ix_temp])
+      }
       if(verbose) cat('Done with iteration ', i, ' of ', ncuts, '\n')
     }
   }
 
   # create JOUS object
   jous_obj = list(delta=delta, nu=nu, q=q, type=type, models=models,
-                  pred_func = pred_func)
+                  pred_func = pred_func, packages=packages, parallel=parallel)
   class(jous_obj) = "JOUS"
 
   # in sample
@@ -177,7 +220,7 @@ jous = function(X, y,
 #' pred_func = function(fit_obj, X_test) predict(fit_obj, X_test)
 #'
 #' jous_fit = jous(dat$X[train_index,], dat$y[train_index], class_func,
-#'                 pred_func, type="under", delta=10, keep_models=TRUE)
+#'                 pred_func, keep_models=TRUE)
 #' # get class prediction
 #' yhat = predict(jous_fit, dat$X[-train_index, ])
 #' # get probability estimate
@@ -195,8 +238,16 @@ predict.JOUS = function(object, X, type=c("response", "prob"), ...){
   delta = object$delta
   q = object$q
 
-  # calculate predictions for each classifier
-  pred_mat = sapply(object$models, function(z) object$pred_func(z, X))
+  ## calculate predictions for each classifier
+  if(object$parallel){
+    pred_mat = foreach(i = seq_along(object$models), .inorder=T,
+                       .packages = object$packages, .combine=cbind) %dopar%{
+                         object$pred_func(object$models[[i]], X)
+                       }
+  } else{
+    pred_mat = sapply(object$models, function(z) object$pred_func(z, X))
+  }
+
   if(!all(pred_mat %in% c(-1,1)))
     stop("Your prediction function must return values only in -1, 1")
 
