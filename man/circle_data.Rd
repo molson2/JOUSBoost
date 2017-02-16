@@ -43,8 +43,7 @@ x = seq(-outer_r, outer_r, by=0.02)
 radius = sqrt(outer(x^2, x^2, "+"))
 prob = ifelse(radius >= outer_r, 0, ifelse(radius <= inner_r, 1,
              (outer_r-radius)/(outer_r-inner_r)))
-filled.contour(x, x, prob, col=rev(palette(gray(seq(0,.9,len=20)))),
-               xlab='x1', ylab='x2', main='p(y=1|x)')
+image(x, x, prob, main='Probability Density: Circle Example')
 }
 
 }

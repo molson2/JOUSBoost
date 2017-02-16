@@ -83,6 +83,7 @@ adaboost = function(X, y, tree_depth = 3, n_rounds = 100, verbose = FALSE){
       if(i == 1){
         trees[[i]] = tree
         alphas[[i]] = 1
+        terms = tree$terms
         break
       }
       break
