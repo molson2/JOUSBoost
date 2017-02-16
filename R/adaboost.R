@@ -78,8 +78,15 @@ adaboost = function(X, y, tree_depth = 3, n_rounds = 100, verbose = FALSE){
     e = sum(w*(pred != y))
 
     # If tree perfectly gets data, boosting terminates
-    if(abs(e) < 1e-8)
+    if(abs(e) < 1e-8){
+      # handle the case where first base classifier fits data perfectly
+      if(i == 1){
+        trees[[i]] = tree
+        alphas[[i]] = 1
+        break
+      }
       break
+    }
 
     alpha = 1/2*log((1-e)/e)
     w = w*exp(-alpha*pred*y)
