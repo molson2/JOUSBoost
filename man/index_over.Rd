@@ -20,4 +20,3 @@ returns a list, each of element of which gives indices to be used on
 \description{
 Return indices to be used for jittered data in oversampling
 }
-

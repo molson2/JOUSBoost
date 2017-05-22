@@ -13,12 +13,12 @@ jous(X, y, class_func, pred_func, type = c("under", "over"), delta = 10,
 
 \item{y}{A vector of responses with entries in \code{c(-1, 1)}.}
 
-\item{class_func}{Function to perform classification.  This function must be
+\item{class_func}{Function to perform classification.  This function definition must be
 exactly of the form \code{class_func(X, y)} where X is a matrix and y is a
 vector with entries in \code{c(-1, 1)}, and it must return an object on which
 \code{pred_func} can create predictions.  See examples.}
 
-\item{pred_func}{Function to create predictions.  This function must be
+\item{pred_func}{Function to create predictions.  This function definition must be
 exactly of the form \code{pred_func(fit_obj, X)} where \code{fit_obj}
 is an object returned by class_func and X is a matrix of new data
 values, and it must return a vector with entries in \code{c(-1, 1)}.
@@ -63,7 +63,7 @@ the estimated probabilities will be located at the midpoints of the values in
 \item{phat_test}{Probability estimates for the optional test data in \code{X_test}}
 \item{models}{If \code{keep_models=TRUE}, a list of models fitted to
 the resampled data sets.}
-\item{confusion_matrix} A confusion matrix for the in-sample fits.
+\item{confusion_matrix}{A confusion matrix for the in-sample fits.}
 }
 \description{
 Perform probability estimation using jittering with over or undersampling.
@@ -78,22 +78,22 @@ oversampling case, it is not clear how to "jitter" a categorical variable.
 \dontrun{
 # Generate data from Friedman model #
 set.seed(111)
-dat = friedman_data(n = 500, d = 10, gamma = 0.5)
+dat = friedman_data(n = 500, gamma = 0.5)
 train_index = sample(1:500, 400)
 
-# Apply jous to adaBoost classifier
+# Apply jous to adaboost classifier
 class_func = function(X, y) adaboost(X, y, tree_depth = 2, n_rounds = 200)
 pred_func = function(fit_obj, X_test) predict(fit_obj, X_test)
 
 jous_fit = jous(dat$X[train_index,], dat$y[train_index], class_func,
-                pred_func, keep_models=TRUE)
+                pred_func, keep_models = TRUE)
 # get probability
-phat_jous = predict(jous_fit, dat$X[-train_index, ], type="prob")
+phat_jous = predict(jous_fit, dat$X[-train_index, ], type = "prob")
 
 # compare with probability from AdaBoost
 ada = adaboost(dat$X[train_index,], dat$y[train_index], tree_depth = 2,
                n_rounds = 200)
-phat_ada = predict(ada, dat$X[train_index,], type="prob")
+phat_ada = predict(ada, dat$X[train_index,], type = "prob")
 
 mean((phat_jous - dat$p[-train_index])^2)
 mean((phat_ada - dat$p[-train_index])^2)
@@ -107,16 +107,23 @@ registerDoParallel(cl)
 # n.b. the packages='rpart' is not really needed here since it gets
 # exported automatically by JOUSBoost, but for illustration
 jous_fit = jous(dat$X[train_index,], dat$y[train_index], class_func,
-                pred_func, keep_models=TRUE, parallel=TRUE,
-                packages='rpart')
-phat = predict(jous_fit, dat$X[-train_index,], type='prob')
+                pred_func, keep_models = TRUE, parallel = TRUE,
+                packages = 'rpart')
+phat = predict(jous_fit, dat$X[-train_index,], type = 'prob')
 stopCluster(cl)
-}
 
+## Example using SVM
+
+library(kernlab)
+class_func = function(X, y) ksvm(X, as.factor(y), kernel = 'rbfdot')
+pred_func = function(obj, X) as.numeric(as.character(predict(obj, X)))
+jous_obj = jous(train_data$X, train_data$y, class_func = class_func,
+           pred_func = pred_func, keep_models = TRUE)
+jous_pred = predict(jous_obj, test_data$X, type = 'prob')
+}
 }
 \references{
 Mease, D., Wyner, A. and Buja, A. (2007). Costweighted
 boosting with jittering and over/under-sampling:
 JOUS-boost. J. Machine Learning Research 8 409-439.
 }
-

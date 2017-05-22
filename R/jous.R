@@ -6,11 +6,11 @@
 #' @param y A vector of responses with entries in \code{c(-1, 1)}.
 #' @param delta An integer (greater than 3) to control the number of quantiles to
 #'        estimate:
-#' @param class_func Function to perform classification.  This function must be
+#' @param class_func Function to perform classification.  This function definition must be
 #'        exactly of the form \code{class_func(X, y)} where X is a matrix and y is a
 #'        vector with entries in \code{c(-1, 1)}, and it must return an object on which
 #'        \code{pred_func} can create predictions.  See examples.
-#' @param pred_func Function to create predictions.  This function must be
+#' @param pred_func Function to create predictions.  This function definition must be
 #'        exactly of the form \code{pred_func(fit_obj, X)} where \code{fit_obj}
 #'        is an object returned by class_func and X is a matrix of new data
 #'        values, and it must return a vector with entries in \code{c(-1, 1)}.
@@ -43,7 +43,7 @@
 #' \item{phat_test}{Probability estimates for the optional test data in \code{X_test}}
 #' \item{models}{If \code{keep_models=TRUE}, a list of models fitted to
 #' the resampled data sets.}
-#' \item{confusion_matrix} A confusion matrix for the in-sample fits.
+#' \item{confusion_matrix}{A confusion matrix for the in-sample fits.}
 #'
 #' @note The \code{jous} function runs the classifier \code{class_func} a total
 #' of \code{delta} times on the data, which can be computationally expensive.
@@ -58,22 +58,22 @@
 #' \dontrun{
 #' # Generate data from Friedman model #
 #' set.seed(111)
-#' dat = friedman_data(n = 500, d = 10, gamma = 0.5)
+#' dat = friedman_data(n = 500, gamma = 0.5)
 #' train_index = sample(1:500, 400)
 #'
-#' # Apply jous to adaBoost classifier
+#' # Apply jous to adaboost classifier
 #' class_func = function(X, y) adaboost(X, y, tree_depth = 2, n_rounds = 200)
 #' pred_func = function(fit_obj, X_test) predict(fit_obj, X_test)
 #'
 #' jous_fit = jous(dat$X[train_index,], dat$y[train_index], class_func,
-#'                 pred_func, keep_models=TRUE)
+#'                 pred_func, keep_models = TRUE)
 #' # get probability
-#' phat_jous = predict(jous_fit, dat$X[-train_index, ], type="prob")
+#' phat_jous = predict(jous_fit, dat$X[-train_index, ], type = "prob")
 #'
 #' # compare with probability from AdaBoost
 #' ada = adaboost(dat$X[train_index,], dat$y[train_index], tree_depth = 2,
 #'                n_rounds = 200)
-#' phat_ada = predict(ada, dat$X[train_index,], type="prob")
+#' phat_ada = predict(ada, dat$X[train_index,], type = "prob")
 #'
 #' mean((phat_jous - dat$p[-train_index])^2)
 #' mean((phat_ada - dat$p[-train_index])^2)
@@ -87,18 +87,26 @@
 #' # n.b. the packages='rpart' is not really needed here since it gets
 #' # exported automatically by JOUSBoost, but for illustration
 #' jous_fit = jous(dat$X[train_index,], dat$y[train_index], class_func,
-#'                 pred_func, keep_models=TRUE, parallel=TRUE,
-#'                 packages='rpart')
-#' phat = predict(jous_fit, dat$X[-train_index,], type='prob')
+#'                 pred_func, keep_models = TRUE, parallel = TRUE,
+#'                 packages = 'rpart')
+#' phat = predict(jous_fit, dat$X[-train_index,], type = 'prob')
 #' stopCluster(cl)
-#' }
 #'
+#' ## Example using SVM
+#'
+#' library(kernlab)
+#' class_func = function(X, y) ksvm(X, as.factor(y), kernel = 'rbfdot')
+#' pred_func = function(obj, X) as.numeric(as.character(predict(obj, X)))
+#' jous_obj = jous(train_data$X, train_data$y, class_func = class_func,
+#'            pred_func = pred_func, keep_models = TRUE)
+#' jous_pred = predict(jous_obj, test_data$X, type = 'prob')
+#' }
 #' @export
 jous = function(X, y,
                 class_func,
                 pred_func,
                 type=c("under", "over"),
-                delta = 10,
+                delta=10,
                 nu=1,
                 X_pred=NULL,
                 keep_models=FALSE,
@@ -210,12 +218,12 @@ jous = function(X, y,
 #'
 #' @examples
 #' \dontrun{
-#' #' # Generate data from Friedman model #
+#' # Generate data from Friedman model #
 #' set.seed(111)
-#' dat = friedman_data(n = 500, d = 10, gamma = 0.5)
+#' dat = friedman_data(n = 500, gamma = 0.5)
 #' train_index = sample(1:500, 400)
 #'
-#' # Apply jous to adaBoost classifier
+#' # Apply jous to adaboost classifier
 #' class_func = function(X, y) adaboost(X, y, tree_depth = 2, n_rounds = 100)
 #' pred_func = function(fit_obj, X_test) predict(fit_obj, X_test)
 #'

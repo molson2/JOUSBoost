@@ -18,4 +18,3 @@ Printed summary of the fit, including information about the tree
 \description{
 Print a summary of adaboost fit.
 }
-

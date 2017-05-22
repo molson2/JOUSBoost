@@ -68,10 +68,10 @@ test_that("grid_probs", {
                c(2/3-1/6, 1-1/6, 1/6, 1/3+1/6))
 })
 
-test_that("adaBoost",{
+test_that("adaboost",{
   N = 1000
   dat = friedman_data(N)
-  ada = adaBoost(X = dat$X, y = dat$y, tree_depth = 2, n_rounds = 100)
+  ada = adaboost(X = dat$X, y = dat$y, tree_depth = 2, n_rounds = 100)
   y_hat = predict(ada, dat$X)
 })
 

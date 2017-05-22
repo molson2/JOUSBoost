@@ -19,4 +19,3 @@ for a given quantile in q.}
 \description{
 Find predicted quantiles given classification results at different quantiles.
 }
-

@@ -22,7 +22,7 @@ Returns an object of class AdaBoost containing the following values:
 \item{alphas}{Weights computed in the adaboost fit.}
 \item{trees}{The trees constructed in each round of boosting.  Storing trees
              allows one to make predictions on new data.}
-\item{confusion_matrix} A confusion matrix for the in-sample fits.
+\item{confusion_matrix}{A confusion matrix for the in-sample fits.}
 }
 \description{
 An implementation of the AdaBoost algorithm from Freund and Shapire (1997)
@@ -56,4 +56,3 @@ Freund, Y. and Schapire, R. (1997). A decision-theoretic
 generalization of online learning and an application to boosting, Journal of
  Computer and System Sciences 55: 119-139.
 }
-

@@ -22,4 +22,3 @@ returns a list, each of element of which gives indices to be used on
 \description{
 (note: sampling is done without replacement)
 }
-

@@ -80,7 +80,7 @@ circle_data = function(n = 500, inner_r = 8, outer_r = 28){
 #'
 #' @examples
 #' set.seed(111)
-#' dat = friedman_data(n = 500, d = 10, gamma = 0.5)
+#' dat = friedman_data(n = 500, gamma = 0.5)
 #'
 #' @export
 friedman_data = function(n = 500, d = 10, gamma = 10){

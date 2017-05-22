@@ -27,11 +27,11 @@ The following example gives a useage case for JOUSBoost. This example illustrate
 # Generate data from Friedman model #
 library(JOUSBoost)
 set.seed(111)
-dat = friedman_data(n = 1000, d = 10, gamma = 0.5)
+dat = friedman_data(n = 1000, gamma = 0.5)
 train_index = sample(1:1000, 800)
 
 # Train AdaBoost classifier using depth 3 decision tree
-ada = adaBoost(dat$X[train_index,], dat$y[train_index], tree_depth = 3, n_rounds = 400)
+ada = adaboost(dat$X[train_index,], dat$y[train_index], tree_depth = 3, n_rounds = 400)
 
 # get probability estimate on test data
 phat_ada = predict(ada, dat$X[-train_index, ], type="prob")
@@ -40,8 +40,8 @@ phat_ada = predict(ada, dat$X[-train_index, ], type="prob")
 Next, we'll compute probabilities by using the JOUS procedure.
 
 ``` r
-# Apply jous to adaBoost classifier
-class_func = function(X, y) adaBoost(X, y, tree_depth = 3, n_rounds = 400)
+# Apply jous to adaboost classifier
+class_func = function(X, y) adaboost(X, y, tree_depth = 3, n_rounds = 400)
 pred_func = function(fit_obj, X_test) predict(fit_obj, X_test)
 
 jous_fit = jous(dat$X[train_index,], dat$y[train_index], class_func,

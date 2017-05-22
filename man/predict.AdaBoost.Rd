@@ -4,8 +4,8 @@
 \alias{predict.AdaBoost}
 \title{Create predictions from AdaBoost fit}
 \usage{
-\method{predict}{AdaBoost}(object, X, type = c("response", "prob"),
-  n_tree = NULL, ...)
+predict.AdaBoost(object, X, type = c("response", "prob"), n_tree = NULL,
+  ...)
 }
 \arguments{
 \item{object}{An object of class AdaBoost returned by the \code{adaboost} function.}
@@ -54,4 +54,3 @@ Friedman, J., Hastie, T. and Tibshirani, R. (2000). Additive logistic
 regression: a statistical view of boosting (with discussion), Annals of
 Statistics 28: 337-307.
 }
-

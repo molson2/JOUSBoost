@@ -1,7 +1,7 @@
 Package: JOUSBoost
 Type: Package
 Title: Implements Under/Oversampling for Probability Estimation
-Version: 1.0.0
+Version: 2.0.0
 Authors@R: person("Matthew", "Olson", , "maolson@wharton.upenn.edu", c("aut", "cre"))
 Description: Implements under/oversampling for probability estimation.  To be
     used with machine learning methods such as adaBoost, random forests, etc.
@@ -11,10 +11,10 @@ Suggests:
     testthat
 LinkingTo: Rcpp
 Depends:
-    R (>= 2.10),
-    foreach
+    R (>= 2.10)
 Imports:
     Rcpp,
     rpart,
-    stats
-RoxygenNote: 5.0.1
+    stats,
+    foreach
+RoxygenNote: 6.0.1

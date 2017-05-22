@@ -17,7 +17,7 @@
 #' \item{alphas}{Weights computed in the adaboost fit.}
 #' \item{trees}{The trees constructed in each round of boosting.  Storing trees
 #'              allows one to make predictions on new data.}
-#' \item{confusion_matrix} A confusion matrix for the in-sample fits.
+#' \item{confusion_matrix}{A confusion matrix for the in-sample fits.}
 #'
 #' @note Trees are grown using the CART algorithm implemented in the \code{rpart}
 #'       package.  In order to conserve memory, the only parts of the fitted

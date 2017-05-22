@@ -23,4 +23,3 @@ Gorman, R. P., and Sejnowski, T. J. (1988). "Analysis of Hidden
  Trained to Classify Sonar Targets" in Neural Networks, Vol. 1, pp. 75-89.
 }
 \keyword{datasets}
-

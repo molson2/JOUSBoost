@@ -28,7 +28,7 @@ and \eqn{x} is distributed as N(0, I_\code{d}x\code{d}).  See Friedman (2000).
 }
 \examples{
 set.seed(111)
-dat = friedman_data(n = 500, d = 10, gamma = 0.5)
+dat = friedman_data(n = 500, gamma = 0.5)
 
 }
 \references{
@@ -36,4 +36,3 @@ Friedman, J., Hastie, T. and Tibshirani, R. (2000). Additive logistic
 regression: a statistical view of boosting (with discussion), Annals of
 Statistics 28: 337-307.
 }
-
