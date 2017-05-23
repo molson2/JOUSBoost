@@ -160,6 +160,7 @@ jous = function(X, y,
 
   # loop over data-sets
   if(parallel){
+    i = NULL
     models = foreach::`%dopar%`(foreach::foreach(i = seq(ncuts), .inorder=T,
                               .packages=packages),
                               {
@@ -251,6 +252,7 @@ predict.JOUS = function(object, X, type=c("response", "prob"), ...){
 
   ## calculate predictions for each classifier
   if(object$parallel){
+    i = NULL
     pred_mat = foreach::`%dopar%`(foreach::foreach(i = seq_along(object$models),
                                                    .inorder=T,
                                                    .packages = object$packages,
