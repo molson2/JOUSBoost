@@ -160,15 +160,19 @@ jous = function(X, y,
 
   # loop over data-sets
   if(parallel){
-    models = foreach(i = seq(ncuts), .inorder=T, .packages=packages) %dopar% {
-      ix_temp = c(ix$ix_neg_cut[[i]], ix$ix_pos_cut[[i]])
-      if(type == 'over'){
-        class_func(rbind(X, X_[ix_temp,]), c(y, y[ix_temp]))
-      } else{
-        class_func(X[ix_temp,], y[ix_temp])
-      }
-    }
-  } else{
+    models = foreach::`%dopar%`(foreach::foreach(i = seq(ncuts), .inorder=T,
+                              .packages=packages),
+                              {
+                                ix_temp = c(ix$ix_neg_cut[[i]],
+                                            ix$ix_pos_cut[[i]])
+                                if(type == 'over'){
+                                  class_func(rbind(X, X_[ix_temp,]),
+                                             c(y, y[ix_temp]))
+                                  } else{
+                                    class_func(X[ix_temp,], y[ix_temp])
+                                  }
+                                })
+  }else{
     for(i in seq(ncuts)){
       ix_temp = c(ix$ix_neg_cut[[i]], ix$ix_pos_cut[[i]])
       if(type == 'over'){
@@ -234,7 +238,6 @@ jous = function(X, y,
 #' # get probability estimate
 #' phat = predict(jous_fit, dat$X[-train_index, ], type="prob")
 #' }
-#' @export predict.JOUS
 #' @export
 predict.JOUS = function(object, X, type=c("response", "prob"), ...){
 
@@ -248,10 +251,13 @@ predict.JOUS = function(object, X, type=c("response", "prob"), ...){
 
   ## calculate predictions for each classifier
   if(object$parallel){
-    pred_mat = foreach(i = seq_along(object$models), .inorder=T,
-                       .packages = object$packages, .combine=cbind) %dopar%{
-                         object$pred_func(object$models[[i]], X)
-                       }
+    pred_mat = foreach::`%dopar%`(foreach::foreach(i = seq_along(object$models),
+                                                   .inorder=T,
+                                                   .packages = object$packages,
+                                                   .combine=cbind),
+                                  {
+                                    object$pred_func(object$models[[i]], X)
+                                  })
   } else{
     pred_mat = sapply(object$models, function(z) object$pred_func(z, X))
   }

@@ -113,7 +113,7 @@ adaboost = function(X, y, tree_depth = 3, n_rounds = 100, verbose = FALSE){
   class(out) = "AdaBoost"
 
   # create confusion matrix for in-sample fits
-  yhat = predict(out, X)
+  yhat = stats::predict(out, X)
   out$confusion_matrix = table(y, yhat)
   out
 
@@ -158,6 +158,7 @@ adaboost = function(X, y, tree_depth = 3, n_rounds = 100, verbose = FALSE){
 #' # get probability estimate
 #' phat = predict(ada, dat$X[-train_index, ], type="prob")
 #' }
+#'
 #' @export predict.AdaBoost
 #' @export
 predict.AdaBoost = function(object, X, type=c("response", "prob"),

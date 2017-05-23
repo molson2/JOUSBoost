@@ -86,7 +86,7 @@ index_under = function(ix_pos, ix_neg, q, delta){
 }
 
 
-#' @useDynLib JOUSBoost
+#' @useDynLib JOUSBoost, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 NULL
 

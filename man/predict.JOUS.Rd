@@ -4,7 +4,7 @@
 \alias{predict.JOUS}
 \title{Create predictions}
 \usage{
-predict.JOUS(object, X, type = c("response", "prob"), ...)
+\method{predict}{JOUS}(object, X, type = c("response", "prob"), ...)
 }
 \arguments{
 \item{object}{An object of class JOUS returned by the \code{jous} function.}

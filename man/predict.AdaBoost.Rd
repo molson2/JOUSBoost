@@ -4,8 +4,8 @@
 \alias{predict.AdaBoost}
 \title{Create predictions from AdaBoost fit}
 \usage{
-predict.AdaBoost(object, X, type = c("response", "prob"), n_tree = NULL,
-  ...)
+\method{predict}{AdaBoost}(object, X, type = c("response", "prob"),
+  n_tree = NULL, ...)
 }
 \arguments{
 \item{object}{An object of class AdaBoost returned by the \code{adaboost} function.}
@@ -48,6 +48,7 @@ yhat = predict(ada, dat$X[-train_index, ])
 # get probability estimate
 phat = predict(ada, dat$X[-train_index, ], type="prob")
 }
+
 }
 \references{
 Friedman, J., Hastie, T. and Tibshirani, R. (2000). Additive logistic
