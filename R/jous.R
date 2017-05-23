@@ -97,9 +97,9 @@
 #' library(kernlab)
 #' class_func = function(X, y) ksvm(X, as.factor(y), kernel = 'rbfdot')
 #' pred_func = function(obj, X) as.numeric(as.character(predict(obj, X)))
-#' jous_obj = jous(train_data$X, train_data$y, class_func = class_func,
+#' jous_obj = jous(dat$X[train_index,], dat$y[train_index], class_func = class_func,
 #'            pred_func = pred_func, keep_models = TRUE)
-#' jous_pred = predict(jous_obj, test_data$X, type = 'prob')
+#' jous_pred = predict(jous_obj, dat$X[-train_index,], type = 'prob')
 #' }
 #' @export
 jous = function(X, y,
